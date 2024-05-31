@@ -126,10 +126,11 @@ IniWriteSettings() {
 if !FileExist("blc.lnk")
    FileCreateShortcut(A_WorkingDir "\lib\AutoHotkey64.exe", "blc.lnk",, A_WorkingDir "\lib\BIRBLITERATURECLUB.ahk",,A_WorkingDir "\Images\logo.ico")
 wr := ComObject("WinHttp.WinHttpRequest.5.1")
-wr.Open("GET", "https://birblit.club/version")
-wr.Send()
-versionText := (StrReplace(wr.ResponseText, '"', "") != StrReplace(config["settings"]["version"], "v", "")) ? "outdated" : config["settings"]["version"]
-
+wr.Open("GET", "https://api.github.com/repos/ninjubaer/BIRBLITERATURECLUB/releases/latest", 0)
+wr.send()
+recentVersion := StrReplace(StrReplace(StrReplace(StrReplace(JSON.parse(wr.ResponseText)["tag_name"] ?? "v1.0.0", "v", ""), ".", ",",,,1), "."), ",", ".")
+currentVersion := StrReplace(StrReplace(StrReplace(StrReplace(config["settings"]["version"], "v", ""), ".", ",",,,1), "."), ",", ".")
+versionText := (recentVersion > currentVersion ? "outdated" : config["settings"]["version"])
 mainIcon := Gdip_BitmapFromBase64("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")
 hBM := Gdip_CreateHBITMAPFromBitmap(mainIcon)
 Gdip_DisposeImage(mainIcon)
@@ -139,7 +140,7 @@ DeleteObject(hBM)
 main := Gui("+OwnDialogs -DPIScale +LastFound", "Birb Literature Club")
 main.OnEvent("Close", (*) => ExitApp())
 main.SetFont("s12", "Tahoma")
-main.Add("Text", "x510 y10 c4598e7 ", "birblit.club").OnEvent("Click", (*) => Run("https://birblit.club"))
+main.Add("Text", "x510 y10 c4598e7 ", "Github").OnEvent("Click", (*) => Run("https://github.com/ninjubaer/BIRBLITERATURECLUB"))
 main.add("Text", "x325 y10 c4598e7", "Discord").OnEvent("Click", (*) => Run("https://discord.gg/ETcBHqBQsh"))
 main.SetFont("s8")
 main.Add("Text", "x547 y292 cblack", versionText)
@@ -637,7 +638,7 @@ subHoney(amount) {
  * @param {VarRef} fail
  * @returns {Number} 
  * @author xspx
- * @url https://github.com/github.com
+ * @url https://github.com/natroteam/natromacro
  */
 GetYOffset(&fail?)
 {
@@ -708,3 +709,4 @@ postFoundToWebhook() {
 #Include Gdip_All2.ahk
 #Include Gdip_ImageSearch2.ahk
 #include ocr2.ahk
+#include JSON.ahk
