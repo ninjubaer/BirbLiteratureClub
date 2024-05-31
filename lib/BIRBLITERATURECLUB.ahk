@@ -91,7 +91,7 @@ config := Map(
       "keyDelay", 0,
       "doublePassiveCheck", 0,
       "spendHoney", "0",
-      "version", "v1.0.0",
+      "version", "v1.0.1",
       "startHotkey", "F6",
       "pausingHotkey", "F7",
       "stopHotkey", "F8",
